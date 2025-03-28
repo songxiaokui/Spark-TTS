@@ -4,11 +4,11 @@ import os
 # Add project root to system path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from flask import Flask, request, send_file, Response
-import torch
 import soundfile as sf
-from datetime import datetime
+import torch
 import platform
+from flask import Flask, request, send_file, Response
+from datetime import datetime
 from cli.SparkTTS import SparkTTS
 
 app = Flask(__name__)
@@ -38,11 +38,22 @@ def init_model(model_dir):
     return SparkTTS(model_dir, device)
 
 
-# 全局变量存储模型实例
+# 获取可用的模型列表
+def get_available_models():
+    demos_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src/demos")
+    models = []
+    for item in os.listdir(demos_dir):
+        if os.path.isdir(os.path.join(demos_dir, item)):
+            models.append(item)
+    return models
+
+
+# 全局变量存储模型实例和模型列表
 model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pretrained_models/Spark-TTS-0.5B")
 if not os.path.exists(model_dir):
     raise ValueError(f"预训练模型目录不存在: {model_dir}")
 model = init_model(model_dir)
+AVAILABLE_MODELS = get_available_models()
 
 
 @app.route('/api/v1/generate', methods=['POST'])
@@ -63,8 +74,16 @@ def generate():
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         save_path = os.path.join(save_dir, f"{timestamp}.wav")
 
-        # 设置默认的prompt音频路径
-        prompt_speech_path = os.path.join(os.getcwd(), 'src', 'demos', 'zhongli', 'zhongli_en.wav')
+        # 根据model_type选择对应的prompt音频
+        if model_type not in AVAILABLE_MODELS:
+            return {'error': f'Invalid model_type. Available models: {AVAILABLE_MODELS}'}, 400
+
+        # 获取对应模型的音频文件
+        model_dir = os.path.join(os.getcwd(), 'src', 'demos', model_type)
+        audio_files = [f for f in os.listdir(model_dir) if f.endswith('.wav')]
+        if not audio_files:
+            return {'error': f'No audio file found for model: {model_type}'}, 500
+        prompt_speech_path = os.path.join(model_dir, audio_files[0])
 
         # 执行语音生成
         with torch.no_grad():
@@ -94,6 +113,14 @@ def generate():
             }
         )
 
+    except Exception as e:
+        return {'error': str(e)}, 500
+
+
+@app.route('/api/v1/models', methods=['GET'])
+def get_models():
+    try:
+        return {'models': AVAILABLE_MODELS}
     except Exception as e:
         return {'error': str(e)}, 500
 
