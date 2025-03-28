@@ -85,7 +85,7 @@ cli:  ## 命令行调用
 	@( \
         . $$(conda info --base)/etc/profile.d/conda.sh && \
         conda activate $(ENV_NAME) && \
-        python -m cli.inference --text "我要做那中兴之主，不料成亡国之君，你要我认什么错" --device 0 --save_dir ./example/results --model_dir pretrained_models/Spark-TTS-0.5B   --prompt_speech_path "src/demos/马云/mayun_zh.wav" \
+        python -m cli.inference --text "文王序《易》，以乾坤为首。孔子系之曰：“天尊地卑，乾坤定矣，卑高以陈，贵贱位矣。”言君臣之位，犹天地之不可易也。《春秋》抑诸侯，尊周室，王人虽微，序于诸侯之上，以是见圣人于君臣之际，未尝不惓惓也。非有桀、纣之暴，汤、武之仁，人归之，天命之，君臣之分，当守节伏死而已矣。是故以微子而代纣，则成汤配天矣；以季札而君吴，则太伯血食矣。然二子宁亡国而不为者，诚以礼之大节不可乱也。故曰：礼莫大于分也" --device 0 --save_dir ./example/results --model_dir pretrained_models/Spark-TTS-0.5B --prompt_text "朕，登基了17年了，朕，负过的人不少，负朕的人更多。朕非亡国之君，为何世事皆为亡国之相，斩杀袁崇焕的时候朕只有18岁，自毁长城也好，刚愎自用也罢，朕要做中兴之主，不料成为亡国之君，你要朕认什么错。崇祯愧对列祖列宗！"  --prompt_speech_path "src/demos/Erebus/chongzheng_zh.wav" \
     )
 
 .PHONY: build
