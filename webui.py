@@ -49,14 +49,14 @@ def initialize_model(model_dir="pretrained_models/Spark-TTS-0.5B", device=0):
 
 
 def run_tts(
-    text,
-    model,
-    prompt_text=None,
-    prompt_speech=None,
-    gender=None,
-    pitch=None,
-    speed=None,
-    save_dir="example/results",
+        text,
+        model,
+        prompt_text=None,
+        prompt_speech=None,
+        gender=None,
+        pitch=None,
+        speed=None,
+        save_dir="example/results",
 ):
     """Perform TTS inference and save the generated audio."""
     logging.info(f"Saving audio to: {save_dir}")
@@ -92,7 +92,6 @@ def run_tts(
 
 
 def build_ui(model_dir, device=0):
-
     # Initialize model
     model = initialize_model(model_dir, device=device)
 
@@ -146,12 +145,12 @@ def build_ui(model_dir, device=0):
 
                 with gr.Row():
                     prompt_wav_upload = gr.Audio(
-                        sources="upload",
+                        # sources="upload",
                         type="filepath",
                         label="Choose the prompt audio file, ensuring the sampling rate is no lower than 16kHz.",
                     )
                     prompt_wav_record = gr.Audio(
-                        sources="microphone",
+                        # sources="microphone",
                         type="filepath",
                         label="Record the prompt audio file.",
                     )
@@ -252,6 +251,7 @@ def parse_arguments():
     )
     return parser.parse_args()
 
+
 if __name__ == "__main__":
     # Parse command-line arguments
     args = parse_arguments()
@@ -265,5 +265,6 @@ if __name__ == "__main__":
     # Launch Gradio with the specified server name and port
     demo.launch(
         server_name=args.server_name,
-        server_port=args.server_port
+        server_port=args.server_port,
+        share=True,
     )
