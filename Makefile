@@ -1,5 +1,7 @@
 ENV_NAME ?= my_sparktts
 MODEL_DIR ?= pretrained_models
+Model ?= cpu
+ARCH ?= linux/amd64
 
 .PHONY: env
 env:  ## 初始化环境
@@ -89,7 +91,8 @@ cli:  ## 命令行调用
 .PHONY: build
 build:  ## 构建服务
 	@echo "build web server..."
-	@docker build -t sparktts:v0.1.0 -f Dockerfile .
+	@echo "build with $(Model) support..."
+	@docker build -t sparktts:v0.1.0-$(Model) --platform $(ARCH) --build-arg TARGET_STAGE=$(Model) -f Dockerfile .
 
 .PHONY: run
 run:  ## 运行服务
