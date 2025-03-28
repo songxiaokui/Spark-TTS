@@ -86,6 +86,16 @@ cli:  ## 命令行调用
         python -m cli.inference --text "我要做那中兴之主，不料成亡国之君，你要我认什么错" --device 0 --save_dir ./example/results --model_dir pretrained_models/Spark-TTS-0.5B   --prompt_speech_path "src/demos/马云/mayun_zh.wav" \
     )
 
+.PHONY: build
+build:  ## 构建服务
+	@echo "build web server..."
+	@docker build -t sparktts:v0.1.0 -f Dockerfile .
+
+.PHONY: run
+run:  ## 运行服务
+	@echo "running server..."
+	@cd $(CURDIR) && docker-compose up -d
+
 help:
 	@awk -F ':|##' '/^[^\t].+?:.*?##/ {\
 		printf "\033[36m%-30s\033[0m \033[31m%s\033[0m\n", $$1, $$NF \

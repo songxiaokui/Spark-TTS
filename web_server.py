@@ -14,6 +14,18 @@ from cli.SparkTTS import SparkTTS
 app = Flask(__name__)
 
 
+# 自定义 CORS 中间件
+@app.after_request
+def add_cors_headers(response):
+    # 允许所有来源访问
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    # 允许的请求方法
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    # 允许的请求头
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
+
 # 初始化TTS模型
 def init_model(model_dir):
     if platform.system() == "Darwin" and torch.backends.mps.is_available():
